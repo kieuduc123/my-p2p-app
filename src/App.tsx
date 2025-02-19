@@ -32,7 +32,7 @@ function App() {
  const addTransaction = (tx: Transaction) => {
   const newTransaction = {
     ...tx,
-    date: new Date().toISOString(), // 🔥 Gán thời gian tạo khi tạo giao dịch
+    date: new Date().toISOString(),
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
