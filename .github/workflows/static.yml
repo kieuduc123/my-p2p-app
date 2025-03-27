@@ -46,7 +46,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
       # ✅ Thông báo thành công lên Discord
       - name: Notify Discord on Success
         if: success()
