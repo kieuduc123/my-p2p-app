@@ -51,20 +51,30 @@ jobs:
       - name: Notify Discord on Success
         if: success()
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"✅ Deployment thành công! 🚀 Xem tại: ${{ steps.deployment.outputs.page_url }}\"}" \
-               "$DISCORD_WEBHOOK_URL"
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "⚠️ Webhook URL is empty. Skipping Discord notification."
+            exit 0
+          fi
+          
+          echo "Notifying Discord on success..."
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+               -H "Content-Type: application/json" \
+               -d "$(jq -n --arg url "${{ steps.deployment.outputs.page_url }}" '{content: "✅ Deployment thành công! 🚀 Xem tại: \($url)"}')"
 
       # ❌ Thông báo thất bại lên Discord
       - name: Notify Discord on Failure
         if: failure()
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"❌ Deployment thất bại! Xem log lỗi: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
-               "$DISCORD_WEBHOOK_URL"
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "⚠️ Webhook URL is empty. Skipping Discord notification."
+            exit 0
+          fi
+          
+          echo "Notifying Discord on failure..."
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+               -H "Content-Type: application/json" \
+               -d "$(jq -n --arg url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" '{content: "❌ Deployment thất bại! Xem log lỗi: \($url)"}')"
