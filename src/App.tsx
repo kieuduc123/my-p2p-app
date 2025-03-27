@@ -22,7 +22,7 @@ function App() {
   const [transactions, setTransactions] = React.useState<Transaction[]>(loadTransactions());
 
   // Nhận dữ liệu từ BroadcastChannel khi có giao dịch mới
-  useEffect(() => {
+  React.useEffect(() => {
     channel.onmessage = (event) => {
       setTransactions(event.data);
     };
