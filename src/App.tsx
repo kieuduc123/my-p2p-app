@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./App.css";
 import { Transaction } from "./components/TransactionList/types";
 import TransactionForm from "./components/TransactionForm/TransactionForm";
@@ -7,13 +7,10 @@ import TransactionList from "./components/TransactionList";
 const STORAGE_KEY = "p2p_transactions";
 const channel = new BroadcastChannel("p2p_channel");
 
-// Load dữ liệu từ localStorage khi mở trang
 const loadTransactions = (): Transaction[] => {
   const data = localStorage.getItem(STORAGE_KEY);
   return data ? JSON.parse(data) : [];
 };
-
-// Lưu vào localStorage
 const saveTransactions = (transactions: Transaction[]) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 };
@@ -22,13 +19,12 @@ function App() {
   const [transactions, setTransactions] = React.useState<Transaction[]>(loadTransactions());
 
   // Nhận dữ liệu từ BroadcastChannel khi có giao dịch mới
-  reacr.useEffect(() => {
+  React.useEffect(() => {
     channel.onmessage = (event) => {
       setTransactions(event.data);
     };
   }, []);
 
-  // Khi tạo giao dịch, cập nhật cả localStorage & BroadcastChannel
  const addTransaction = (tx: Transaction) => {
   const newTransaction = {
     ...tx,
